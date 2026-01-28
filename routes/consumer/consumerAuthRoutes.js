@@ -9,6 +9,6 @@ const router = express.Router();
 router.post("/login", sendOtp); 
 
 // Verify OTP
-router.post("/verify-otp", logoUpload.single('selfie') , verifyConsumerOtp);
+router.post("/verify-otp", logoUpload.single('brandLogo') , verifyConsumerOtp);
 
 export default router;

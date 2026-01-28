@@ -71,7 +71,7 @@ export const sendOtp = async (req, res) => {
 
     return res.json({
       message: "OTP sent successfully",
-      isExistingUser: Boolean(consumer.name && consumer.dob),
+      isExistingUser: Boolean(consumer.businessName && consumer.ownerName),
       sent
     });
   } catch (err) {
@@ -85,24 +85,24 @@ export const verifyConsumerOtp = async (req, res) => {
     const {
       mobile,
       otp,
-      name,
-      dob,
-      lat,
-      lon,
+      businessName,
+      ownerName,
+      businessCategory,
+      accountType,
       location,
     } = req.body;
 
     // 🔹 brandLogo from file upload OR body
-    const selfie = req.file ? req.file.path : req.body.selfie;
+    const brandLogo = req.file ? req.file.path : req.body.brandLogo;
 
     if (!mobile || !otp) {
       return res.status(400).json({ message: "Mobile & OTP are required" });
     }
 
     const consumer = await Consumer.findOne({ mobile });
-    // if (!consumer) {
-    //   return res.status(404).json({ message: "Consumer not found" });
-    // }
+    if (!consumer) {
+      return res.status(404).json({ message: "Consumer not found" });
+    }
 
     // ✅ Verify OTP
     if (
@@ -121,15 +121,15 @@ export const verifyConsumerOtp = async (req, res) => {
     let profileCompletedNow = false;
 
     // 🔹 Profile completion check
-    if (!consumer.name || !consumer.ownerName) {
-      if (name && location) {
-        consumer.name = name;
-        consumer.dob = dob;
-        consumer.lat = lat;
-        consumer.lon = lon;
+    if (!consumer.businessName || !consumer.ownerName) {
+      if (businessName && ownerName) {
+        consumer.businessName = businessName;
+        consumer.ownerName = ownerName;
+        consumer.businessCategory = businessCategory;
         consumer.location = location;
-        if (selfie) {
-          consumer.selfie = selfie;
+        consumer.accountType = accountType || consumer.accountType;
+        if (brandLogo) {
+          consumer.brandLogo = brandLogo;
         }
 
         profileCompletedNow = true;
@@ -166,12 +166,12 @@ export const verifyConsumerOtp = async (req, res) => {
       isExistingUser: true,
       data: {
         _id: consumer._id,
-        name: consumer.name,
+        businessName: consumer.businessName,
+        ownerName: consumer.ownerName,
         mobile: consumer.mobile,
-        selfie: consumer.selfie,
-        dob: consumer.dob,
-        lat: consumer.lat,
-        lon: consumer.lon,
+        brandLogo: consumer.brandLogo,
+        accountType: consumer.accountType,
+        businessCategory: consumer.businessCategory,
         location: consumer.location,
         isVerified: consumer.isVerified,
       },
@@ -182,7 +182,6 @@ export const verifyConsumerOtp = async (req, res) => {
       .json({ message: "Error verifying OTP", error: err.message });
   }
 };
-
 
 // STEP 3: Complete registration (for new users) after OTP verification
 // Requires Bearer token from verifyConsumerOtp

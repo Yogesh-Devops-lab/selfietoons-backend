@@ -24,19 +24,22 @@ export const imageUrlToBase64 = async (imageUrl) => {
 //   const base64 = Buffer.from(response.data).toString("base64");
 
 //   return `data:${contentType};base64,${base64}`;
-// };           
+// };
 
 export const createVideoFromImages = async (req, res) => {
   try {
 
-    const { consumerId , videoType ,category, subStyle } = req.body;
-    // const consumerId = req.user.id; // from JWT middleware  
+    const { consumerId ,category, subStyle } = req.body;
+    // const consumerId = req.user.id; // from JWT middleware
 
     const openingFile = req.files?.openingImage?.[0]?.path || req.body.openingImage;
     const closeFile = req.files?.closeImage?.[0]?.path || req.body.closeImage;
 
     console.log("openingFile" , openingFile);
     console.log("openingFile" , closeFile);
+
+    
+
 
     if (!openingFile || !closeFile) {
       return res.status(400).json({
@@ -116,14 +119,13 @@ console.log(openingImage.startsWith("data:image")); // true
     // 💾 Store in DB
     const savedVideo = await GenerateVideo.create({
       consumerId,
-      videoType,
       videoCategory: category,
-      openingImage : openingImageUrl,
-      closeImage : closeImageUrl,
+     // openingImage,
+     // closeImage,
       videoPrompt: selectedPromptSet.prompt,
       videoUrl: result.url,
-      publicUrl : result.publicUrl,
       videoFile: result.file,
+	  publicUrl : result.publicUrl,
       duration: result.duration,
     });
 
@@ -139,6 +141,7 @@ console.log(openingImage.startsWith("data:image")); // true
     });
   }
 };
+
 
 
 

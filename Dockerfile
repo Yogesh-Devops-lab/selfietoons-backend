@@ -20,7 +20,7 @@ COPY . .
 
 
 # =========================
-# 2️⃣ Production Stage    
+# 2️⃣ Production Stage
 # =========================
 FROM node:20-alpine
 

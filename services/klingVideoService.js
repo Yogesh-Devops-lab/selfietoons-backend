@@ -165,6 +165,7 @@ export const generateKlingVideo = async (payload, consumerId) => {
       message: err.message,
       stack: err.stack,
     });
+
     throw err;
   }
 };

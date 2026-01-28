@@ -8,4 +8,5 @@ const router = express.Router();
 router.post("/generateVideo", videoImagesUpload ,  createVideoFromImages);
 router.post("/get-by-consumer", getVideosByConsumerId);
 
-export default router; 
+
+export default router;
